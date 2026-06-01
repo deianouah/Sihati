@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import '../services/ocr_service.dart';
+import '../services/notification_service.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
 import '../models/meal.dart';
 import '../providers/meal_provider.dart';
 
@@ -35,6 +38,19 @@ class _AddMealScreenState extends State<AddMealScreen> {
     Navigator.pop(context);
   }
 
+  // -----------------------------------------------------------------
+  // Image picker & OCR helper
+  // -----------------------------------------------------------------
+  Future<void> _pickImageAndExtract() async {
+    final picker = ImagePicker();
+    final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+    if (image == null) return;
+    final text = await OcrService.recognizeText(image.path);
+    setState(() {
+      _notesController.text = text;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -68,7 +84,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                   initialTime: _selectedTime,
                 );
                 if (time != null) {
-                  setState(() => _selectedTime = time);
+                  setState(() { _selectedTime = time; });
                 }
               },
             ),
@@ -85,6 +101,23 @@ class _AddMealScreenState extends State<AddMealScreen> {
             ElevatedButton(
               onPressed: _saveMeal,
               child: const Text('حفظ'),
+            ),
+            const SizedBox(height: 16),
+            // OCR and TTS buttons row
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton.icon(
+                  onPressed: _pickImageAndExtract,
+                  icon: const Icon(Icons.photo),
+                  label: const Text('استيراد صورة'),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () => NotificationService.speak(_notesController.text),
+                  icon: const Icon(Icons.volume_up),
+                  label: const Text('قراءة بصوت'),
+                ),
+              ],
             ),
           ],
         ),

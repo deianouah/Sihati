@@ -12,6 +12,8 @@
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>NSCameraUsageDescription</key>
 	<string>This app requires access to the camera to scan prescriptions.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>This app requires microphone access for text-to-speech playback.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app requires access to the photo library to upload prescriptions.</string>
 	<key>CFBundleIdentifier</key>

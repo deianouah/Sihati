@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
     // Update every second for live countdown
     _timer = Timer.periodic(const Duration(seconds: 1), (_) {
-      setState(() => _now = DateTime.now());
+      setState(() { _now = DateTime.now(); });
     });
   }
 
@@ -58,9 +58,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final h = d.inHours;
     final m = d.inMinutes.remainder(60);
     final s = d.inSeconds.remainder(60);
-    if (h > 0) return '${h}س ${m}د';
-    if (m > 0) return '${m} دقيقة ${s.toString().padLeft(2, '0')}ث';
-    return '${s} ثانية';
+    if (h > 0) return '$hس $mد';
+    if (m > 0) return '$m دقيقة ${s.toString().padLeft(2, '0')}ث';
+    return '$s ثانية';
   }
 
   String _formatTime(Meal meal) {
@@ -438,7 +438,7 @@ class _MealTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final log = todayLogs.where((l) => l.mealId == meal.id).firstOrNull;
+    final log = todayLogs.firstWhere((l) => l.mealId == meal.id, orElse: () => null);
     final isCompleted = log?.isCompleted ?? false;
     final hasFeedback = log != null;
 
@@ -456,8 +456,8 @@ class _MealTile extends StatelessWidget {
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CircleAvatar(
           backgroundColor: hasFeedback
-              ? (isCompleted ? AppTheme.successColor : AppTheme.errorColor)
-              : AppTheme.primaryColor.withValues(alpha: 0.1),
+               ? (isCompleted ? AppTheme.successColor : AppTheme.errorColor)
+               : AppTheme.primaryColor.withValues(alpha: 0.1),
           child: Text(
             hasFeedback ? (isCompleted ? '✅' : '❌') : '🍽️',
             style: const TextStyle(fontSize: 18),
