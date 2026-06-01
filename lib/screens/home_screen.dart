@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import '../models/meal.dart';
+import '../models/medicine.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../providers/meal_provider.dart';
 import '../services/notification_service.dart';
 import '../theme/app_theme.dart';
 import 'add_meal_screen.dart';
 import 'meal_confirm_screen.dart';
 import 'ocr_screen.dart';
+import 'medicine_list_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -121,6 +124,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 // --- Compliance Card ---
                 _ComplianceCard(provider: provider),
                 const SizedBox(height: 16),
+                // Mixed Meal Card
+                _MixedMealCard(onAdd: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const AddMealScreen()))),
+                const SizedBox(height: 16),
+                // Medicine Summary Card
+                _MedicineSummaryCard(),
+                const SizedBox(height: 16),
                 // --- All Meals List ---
                 if (provider.meals.isNotEmpty) ...[
                   Text(
@@ -148,6 +157,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       )),
                 ],
+                const SizedBox(height: 20),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.primaryColor,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                  ),
+                  onPressed: () => Navigator.pushNamed(context, '/medicines'),
+                  icon: const Icon(Icons.medication),
+                  label: Text('قائمة الأدوية', style: GoogleFonts.tajawal(fontSize: 16, fontWeight: FontWeight.w600)),
+                ),
               ],
             ),
           );
@@ -502,3 +523,73 @@ class _MealTile extends StatelessWidget {
     );
   }
 }
+
+// ----- Additional Widgets -----
+
+class _MixedMealCard extends StatelessWidget {
+  final VoidCallback onAdd;
+  const _MixedMealCard({required this.onAdd});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text('وجبة مختلطة', style: GoogleFonts.elMessiri(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
+            const SizedBox(height: 8),
+            Text('أضف وجبة تحتوي على مزيج من المكونات.', style: GoogleFonts.tajawal(color: AppTheme.textSecondary)),
+            const SizedBox(height: 12),
+            ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor, foregroundColor: Colors.white),
+              onPressed: onAdd,
+              icon: const Icon(Icons.add),
+              label: Text('إضافة وجبة مختلطة', style: GoogleFonts.tajawal()),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _MedicineSummaryCard extends StatelessWidget {
+  const _MedicineSummaryCard();
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder<Box<Medicine>>(
+      valueListenable: Hive.box<Medicine>('medicines_box').listenable(),
+      builder: (context, box, _) {
+        final medicines = box.values.toList();
+        return Card(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          elevation: 4,
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('ملخص الأدوية', style: GoogleFonts.elMessiri(fontSize: 20, fontWeight: FontWeight.bold, color: AppTheme.textPrimary)),
+                const SizedBox(height: 8),
+                Text('عدد الأدوية المضافة: ${medicines.length}', style: GoogleFonts.tajawal(color: AppTheme.textSecondary)),
+                const SizedBox(height: 12),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(backgroundColor: AppTheme.primaryColor, foregroundColor: Colors.white),
+                  onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => MedicineListScreen())),
+                  icon: const Icon(Icons.medication),
+                  label: Text('عرض جميع الأدوية', style: GoogleFonts.tajawal()),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+

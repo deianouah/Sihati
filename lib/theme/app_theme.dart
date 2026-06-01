@@ -10,6 +10,48 @@ class AppTheme {
   static const Color successColor = Color(0xFF4CAF50);
   static const Color errorColor = Color(0xFFF44336);
 
+  static ThemeData get darkTheme {
+    return ThemeData(
+      brightness: Brightness.dark,
+      primaryColor: primaryColor,
+      scaffoldBackgroundColor: const Color(0xFF121212),
+      colorScheme: ColorScheme.dark(
+        primary: primaryColor,
+        secondary: primaryColor.withValues(alpha: 0.8),
+      ),
+      textTheme: GoogleFonts.interTextTheme(
+          ThemeData(brightness: Brightness.dark).textTheme),
+      appBarTheme: AppBarTheme(
+        backgroundColor: primaryColor,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.white),
+        titleTextStyle:
+            const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+        centerTitle: true,
+      ),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: primaryColor,
+          foregroundColor: Colors.white,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding:
+              const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+          textStyle:
+              GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
+      ),
+      cardTheme: CardThemeData(
+        color: const Color(0xFF1E1E1E),
+        elevation: 4,
+        shadowColor: Colors.black.withValues(alpha: 0.2),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16),
+        ),
+      ),
+    );
+  }
+
   static ThemeData get lightTheme {
     return ThemeData(
       primaryColor: primaryColor,
@@ -20,18 +62,18 @@ class AppTheme {
         secondary: primaryColor.withValues(alpha: 0.8),
         surface: backgroundColor,
       ),
-      textTheme: GoogleFonts.tajawalTextTheme().copyWith(
-        displayLarge: GoogleFonts.tajawal(
+      textTheme: GoogleFonts.interTextTheme().copyWith(
+        displayLarge: GoogleFonts.inter(
             fontSize: 32, fontWeight: FontWeight.bold, color: textPrimary),
-        displayMedium: GoogleFonts.tajawal(
+        displayMedium: GoogleFonts.inter(
             fontSize: 28, fontWeight: FontWeight.bold, color: textPrimary),
-        headlineMedium: GoogleFonts.tajawal(
+        headlineMedium: GoogleFonts.inter(
             fontSize: 24, fontWeight: FontWeight.w700, color: textPrimary),
-        titleLarge: GoogleFonts.tajawal(
+        titleLarge: GoogleFonts.inter(
             fontSize: 20, fontWeight: FontWeight.w600, color: textPrimary),
-        bodyLarge: GoogleFonts.tajawal(
+        bodyLarge: GoogleFonts.inter(
             fontSize: 16, fontWeight: FontWeight.w500, color: textPrimary),
-        bodyMedium: GoogleFonts.tajawal(
+        bodyMedium: GoogleFonts.inter(
             fontSize: 14, fontWeight: FontWeight.normal, color: textSecondary),
       ),
       appBarTheme: const AppBarTheme(
@@ -49,12 +91,12 @@ class AppTheme {
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
           foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
-          textStyle: GoogleFonts.tajawal(
-              fontSize: 18, fontWeight: FontWeight.bold),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          padding:
+              const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+          textStyle:
+              GoogleFonts.inter(fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
       cardTheme: CardThemeData(
@@ -68,4 +110,9 @@ class AppTheme {
       ),
     );
   }
+
+  // Custom color for medication cards
+  static const Color medicineCardColor = Color(0xFFB2DFDB); // Soft teal
+
+  // End of Theme
 }

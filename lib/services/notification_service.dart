@@ -4,6 +4,7 @@ import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_tts/flutter_tts.dart';
 import '../models/meal.dart';
+import '../models/medicine.dart';
 import '../screens/meal_confirm_screen.dart';
 
 class NotificationService {
@@ -165,12 +166,38 @@ class NotificationService {
     }
   }
 
-  // ─── Cancel ──────────────────────────────────────────────────────────────────
+  // ─── Medication reminder scheduling ────────────────────────────────────────
+
+  static Future<void> scheduleMedicineReminder(Medicine med) async {
+    if (med.reminderTime == null) return;
+    final now = tz.TZDateTime.now(tz.local);
+    var reminderDt = tz.TZDateTime.from(med.reminderTime!, tz.local);
+    if (reminderDt.isBefore(now)) {
+      reminderDt = reminderDt.add(const Duration(days: 1));
+    }
+    final base = med.id.hashCode.abs() % 10000;
+    final payload = 'med_${med.id}|${med.name}';
+    await _scheduleOne(
+      id: base + 1,
+      title: '⌚ تذكير دواء: ${med.name}',
+      body: 'وقت أخذ الدواء: ${med.dosage} - ${med.frequency}',
+      time: reminderDt,
+      payload: payload,
+    );
+  }
+
+  // ─── Cancel meal notifications ────────────────────────────────────────────────
 
   static Future<void> cancelMealNotifications(String mealId) async {
     final base = mealId.hashCode.abs() % 10000;
+    // cancel three possible notifications (ids base+1, base+2, base+3)
     await _plugin.cancel(id: base + 1);
     await _plugin.cancel(id: base + 2);
     await _plugin.cancel(id: base + 3);
+  }
+
+  static Future<void> cancelMedicineReminder(String medId) async {
+    final base = medId.hashCode.abs() % 10000;
+    await _plugin.cancel(id: base + 1);
   }
 }

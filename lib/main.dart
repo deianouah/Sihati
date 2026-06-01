@@ -11,6 +11,8 @@ import 'providers/meal_provider.dart';
 import 'screens/home_screen.dart';
 import 'screens/signup_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/medicine_list_screen.dart';
+import 'services/ocr_service.dart';
 
 /// Global navigator key — allows notification taps to push screens from outside widget tree
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
@@ -41,8 +43,27 @@ void main() async {
   );
 }
 
-class SihatiApp extends StatelessWidget {
+class SihatiApp extends StatefulWidget {
   const SihatiApp({super.key});
+
+  @override
+  State<SihatiApp> createState() => _SihatiAppState();
+}
+
+class _SihatiAppState extends State<SihatiApp> with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    // Dispose OCR recognizer to free resources
+    OcrService.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +76,7 @@ class SihatiApp extends StatelessWidget {
       routes: {
         '/dashboard': (context) => const HomeScreen(),
         '/signup': (context) => const SignupScreen(),
+        '/medicines': (context) => const MedicineListScreen(),
       },
       builder: (context, child) {
         return Directionality(
